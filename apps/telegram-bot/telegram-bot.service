@@ -1,0 +1,22 @@
+[Unit]
+Description=AI Workspace Telegram Bot
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/ai-workspace/apps/telegram-bot
+EnvironmentFile=/opt/ai-workspace/.env
+ExecStart=/usr/bin/python3 /opt/ai-workspace/apps/telegram-bot/src/bot.py
+Restart=always
+RestartSec=10
+StandardOutput=append:/opt/ai-workspace/apps/telegram-bot/logs/bot.log
+StandardError=append:/opt/ai-workspace/apps/telegram-bot/logs/bot_error.log
+
+# Безопасность
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

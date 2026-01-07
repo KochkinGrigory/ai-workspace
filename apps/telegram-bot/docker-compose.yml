@@ -1,0 +1,30 @@
+services:
+  telegram-bot:
+    build: .
+    container_name: ai-workspace-telegram-bot
+    restart: unless-stopped
+    env_file:
+      - ../../.env  # Общий .env для всего workspace (/opt/ai-workspace/.env)
+    ports:
+      - "8081:8081"  # HTTP API для отправки сообщений
+    volumes:
+      - ./logs:/app/logs
+      - ./src:/app/src  # Для удобной разработки
+      - /usr/local/bin/claude:/usr/local/bin/claude:ro  # Claude CLI
+      - /opt/ai-workspace:/opt/ai-workspace  # Доступ к workspace для Claude сессий
+      - ~/.claude:/root/.claude  # Конфигурация и кеш Claude (read-write для debug logs)
+      - /home/claude-agent/.claude:/home/claude-agent/.claude  # Claude config для claude-agent
+      - /var/run/docker.sock:/var/run/docker.sock  # Docker socket для claude-agent
+    networks:
+      - ai-workspace
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+networks:
+  ai-workspace:
+    name: ai-workspace-network
+    driver: bridge

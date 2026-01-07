@@ -1,0 +1,127 @@
+# AI Workspace - Commercial License
+
+Copyright © 2026 [Your Company Name]. All rights reserved.
+
+## License Grant
+
+This software and associated documentation files (the "Software") are proprietary and confidential.
+
+By purchasing or otherwise obtaining a license to use this Software, you are granted a limited, non-exclusive, non-transferable, revocable license to:
+
+1. Install and use the Software on servers that you own or control
+2. Modify the Software for your internal business purposes
+3. Create derivative works based on the Software for your internal use
+
+## Restrictions
+
+You may NOT:
+
+1. Distribute, sublicense, lease, rent, or lend the Software
+2. Sell or resell the Software or any derivative works
+3. Publicly display or perform the Software
+4. Remove or alter any proprietary notices or labels on the Software
+5. Reverse engineer, decompile, or disassemble the Software (except where prohibited by law)
+6. Use the Software to create competing products or services
+
+## License Types
+
+### Single Server License
+- Valid for installation on one (1) production server
+- Includes updates for 1 year from purchase date
+- Technical support via email
+
+### Multi-Server License
+- Valid for installation on up to five (5) production servers
+- Includes updates for 1 year from purchase date
+- Priority technical support
+
+### Enterprise License
+- Unlimited installations within your organization
+- Perpetual updates
+- Priority technical support
+- Custom integrations upon request
+
+## Third-Party Components
+
+This Software includes or may include third-party open-source components, each governed by its respective license:
+
+- Claude Code CLI - Anthropic (proprietary)
+- Docker - Apache License 2.0
+- Python packages - various licenses (see requirements.txt)
+- Node.js - MIT License
+- aiogram - MIT License
+
+The licenses for these components can be found in their respective documentation.
+
+## Disclaimer of Warranty
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT.
+
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+## External Services
+
+This Software requires external services that are NOT included in the license:
+
+1. **Claude API** - Provided by Anthropic PBC
+   - You must obtain your own API access from https://claude.ai
+   - Subject to Anthropic's terms of service
+   - Billed separately by Anthropic
+
+2. **VPS Hosting** - Your own server infrastructure
+   - You are responsible for server costs and management
+   - Minimum requirements specified in README.md
+
+3. **OpenAI API** (optional) - Provided by OpenAI
+   - Required only for voice message transcription
+   - Subject to OpenAI's terms of service
+   - Billed separately by OpenAI
+
+## Support and Updates
+
+### Support
+- Email support: support@your-domain.com
+- Response time: 24-48 hours for standard licenses
+- Priority support available for multi-server and enterprise licenses
+
+### Updates
+- Bug fixes and security patches provided free of charge during support period
+- Major version upgrades may require additional fees
+- Update announcements via email to registered license holders
+
+## Termination
+
+This license is effective until terminated. Your rights under this license will terminate automatically without notice if you fail to comply with any of its terms.
+
+Upon termination, you must:
+1. Cease all use of the Software
+2. Delete all copies of the Software from your systems
+3. Destroy all documentation and materials related to the Software
+
+## Refund Policy
+
+- 30-day money-back guarantee for first-time purchases
+- Refunds available if Software fails to install on supported systems
+- No refunds after 30 days or for renewal purchases
+
+## Governing Law
+
+This license shall be governed by and construed in accordance with the laws of [Your Jurisdiction], without regard to its conflict of law provisions.
+
+## Contact Information
+
+For licensing inquiries, support, or other questions:
+
+- Website: https://your-domain.com
+- Email: license@your-domain.com
+- Sales: sales@your-domain.com
+- Support: support@your-domain.com
+
+## Acknowledgment
+
+BY INSTALLING OR USING THE SOFTWARE, YOU ACKNOWLEDGE THAT YOU HAVE READ THIS LICENSE, UNDERSTAND IT, AND AGREE TO BE BOUND BY ITS TERMS AND CONDITIONS.
+
+---
+
+Last updated: 2026-01-07
+Version: 1.0.0
