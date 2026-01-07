@@ -1,526 +1,411 @@
-# AI Workspace - Technical Documentation
+# AI Workspace
 
-Production workspace для Claude Code на сервере analiticalo.ru
+**Ваш персональный AI агент на базе Claude Code с интеграцией Telegram**
 
-> Для инструкций Claude Code см. [CLAUDE.md](./CLAUDE.md)
-
----
-
-## Обзор
-
-**Назначение:** Centralized workspace для разработки с Claude Code, хостинг приложений, интеграция с Supabase
-**Сервер:** 5.129.236.4 (production)
-**ОС:** Linux (Ubuntu/Debian)
-**Пользователь:** root (workspace), claude-agent (telegram bot)
+Превратите свой сервер в мощного AI помощника — установка за 5 минут, расширение под любые задачи.
 
 ---
 
-## Структура проекта
+## Что это?
+
+AI Workspace — это готовый к использованию AI агент на базе Claude Code с интеграцией Telegram бота. Общайтесь с Claude AI через Telegram, автоматизируйте задачи, генерируйте изображения, работайте с Excel файлами и расширяйте функционал собственными skills.
+
+### Что вы получаете из коробки:
+
+- **Telegram Бот** — общайтесь с Claude AI через Telegram
+  - Поддержка текста, голосовых, фото, документов
+  - Ответы в реальном времени с управлением сессиями
+  - HTTP API для интеграций
+
+- **5 Базовых Skills** — основные возможности для расширения агента:
+  - **Excel (xlsx)** — создание, чтение, анализ таблиц с формулами
+  - **Генерация изображений** — создание картинок с помощью AI (Gemini)
+  - **Telegram уведомления** — отправка сообщений и файлов в Telegram
+  - **Создание skills** — создавайте новые skills для любых задач
+  - **MCP интеграция** — подключайте внешние сервисы и базы данных
+
+---
+
+## Быстрый старт
+
+### Требования
+
+- Linux сервер (Ubuntu 22.04+ / Debian 11+)
+- Минимум 2 GB RAM
+- Root доступ
+- Интернет соединение
+
+### Установка
+
+```bash
+# Вариант 1: Автоматическая установка (рекомендуется)
+curl -sSL https://your-domain.com/install.sh | sudo bash
+
+# Вариант 2: Ручная установка
+# См.: apps/telegram-bot/DEPLOYMENT.md
+```
+
+Установщик запросит:
+- Telegram Bot Token (получите у @BotFather)
+- Ваш Telegram Chat ID (получите у @userinfobot)
+- (Опционально) OpenAI API Key для транскрипции голосовых
+
+---
+
+## Что умеет?
+
+### 1. Автоматизация Excel
+```
+Вы: "Создай Excel таблицу с данными квартальных продаж"
+Бот: *генерирует таблицу с формулами и форматированием*
+```
+
+### 2. Генерация изображений
+```
+Вы: "Сгенерируй изображение футуристического города на закате"
+Бот: *создает и отправляет AI-изображение*
+```
+
+### 3. Уведомления в Telegram
+```
+Claude: *отправляет вам готовый отчет или файл в Telegram*
+```
+
+### 4. Создание собственных skills
+```
+Вы: "Создай skill для работы с PDF документами"
+Бот: *генерирует новый skill с функционалом PDF*
+```
+
+### 5. Подключение к вашим системам
+```
+Вы: "Подключи MCP сервер для моей PostgreSQL базы данных"
+Бот: *настраивает интеграцию с вашей БД*
+```
+
+---
+
+## Архитектура
 
 ```
 /opt/ai-workspace/
-├── .claude/                  # Claude Code конфигурация
-│   ├── commands/            # Slash команды (markdown)
-│   ├── skills/              # Skills (модульные возможности)
-│   └── settings.local.json  # Локальные настройки
+├── apps/
+│   └── telegram-bot/          # Telegram интеграция
 │
-├── apps/                    # Приложения
-│   ├── dashboard-pages/     # Дашборды с визуализацией (порт 3001)
-│   ├── webapp/              # Веб-сайты и лендинги (порт 3005)
-│   └── telegram-bot/        # Telegram бот (порт 8081)
+├── .claude/
+│   ├── skills/
+│   │   ├── skill-creator/     # Создание новых skills
+│   │   ├── xlsx/              # Операции с Excel
+│   │   ├── nano-banana-image-gen/  # Генерация изображений
+│   │   ├── telegram-notifier/ # Уведомления в Telegram
+│   │   └── mcp-integration/   # Внешние интеграции
+│   │
+│   └── commands/              # Slash команды
 │
-├── commands/                # Shell скрипты для автоматизации
-├── templates/               # Шаблоны проектов
-├── config/                  # Конфигурационные файлы
-├── logs/                    # Логи операций
-├── supabase -> /opt/supabase  # Симлинк на Supabase
-│
-├── .env                     # Переменные окружения (не коммитить!)
-├── CLAUDE.md                # Инструкции для Claude Code
-├── README.md                # Техническая документация (этот файл)
-└── components.json          # Конфиг shadcn UI
+├── commands/                  # Helper скрипты
+├── .env                       # Конфигурация (создается при установке)
+└── README.md                  # Этот файл
 ```
 
 ---
 
-## Приложения
+## Расширение функционала
 
-### 1. Dashboard Pages (порт 3001)
+AI Workspace спроектирован минималистичным и расширяемым. Нужны дополнительные возможности? У вас есть варианты:
 
-**Путь:** `/opt/ai-workspace/apps/dashboard-pages/`
-**Технологии:** Next.js 15, TypeScript, Recharts, Tailwind CSS
-**Назначение:** Интерактивные дашборды с визуализацией данных из БД
+### Добавить новый skill
 
-**Структура:**
+Напишите боту:
 ```
-dashboard-pages/
-├── frontend/
-│   ├── src/app/
-│   │   ├── [report-name]/     # Каждый дашборд = отдельная папка
-│   │   │   └── page.tsx
-│   │   ├── layout.tsx
-│   │   └── globals.css
-│   ├── Dockerfile
-│   └── package.json
-└── docker-compose.yml
+"Создай skill для отправки email через SMTP"
+"Создай skill для парсинга веб-страниц"
+"Создай skill для работы с видео файлами"
 ```
 
-**Docker:**
-- Container: `dashboard-frontend`
-- Port: `3001:3001`
-- Status: Up (может быть unhealthy если нет дашбордов)
+`skill-creator` проведет вас через процесс создания функционала.
 
-**Команды:**
+### Подключить внешние сервисы
+
+Используйте skill `mcp-integration` для подключения:
+- Баз данных (PostgreSQL, MySQL, MongoDB)
+- API (REST, GraphQL)
+- CRM систем (Salesforce, HubSpot, Bitrix24)
+- Облачного хранилища (S3, Google Drive, Dropbox)
+
+Напишите боту:
+```
+"Подключи MCP сервер для моей MySQL базы"
+"Настрой интеграцию с Notion API"
+```
+
+---
+
+## Примеры использования
+
+### Базовые команды
+
+```
+/start               - Запустить бота и посмотреть доступные команды
+/status              - Проверить статус бота и активную сессию
+/stop                - Остановить текущее выполнение Claude
+/restart             - Перезапустить бота
+/help                - Показать доступные команды
+```
+
+### Общение с Claude
+
+```
+Вы: Какое сегодня число?
+Бот: Сегодня [текущая дата]
+
+Вы: Объясни квантовые вычисления простыми словами
+Бот: [подробное объяснение]
+
+Вы: Напиши Python скрипт для парсинга CSV файлов
+Бот: [генерирует Python код с объяснениями]
+```
+
+### Создание таблиц
+
+```
+Вы: Создай Excel файл с 3 листами: Продажи, Расходы и Сводка.
+    Добавь примеры данных и формулы для итогов.
+Бот: *генерирует XLSX файл со всеми запрошенными листами*
+```
+
+### Генерация изображений
+
+```
+Вы: Сгенерируй профессиональный логотип для технологического стартапа "NexaCore"
+Бот: *создает несколько вариантов логотипа*
+
+Вы: Создай иллюстрацию робота, который учит детей
+Бот: *генерирует кастомную иллюстрацию*
+```
+
+---
+
+## Конфигурация
+
+### Переменные окружения
+
+Конфигурация хранится в файле `.env` (создается при установке):
+
 ```bash
-cd /opt/ai-workspace/apps/dashboard-pages
-docker-compose restart          # После создания/изменения страниц
-docker-compose logs -f          # Логи
-docker-compose down && docker-compose up -d --build  # Полный rebuild
+# Обязательно
+TELEGRAM_BOT_TOKEN=ваш_токен_бота
+TELEGRAM_CHAT_ID=ваш_chat_id
+
+# Опционально
+OPENAI_API_KEY=sk-...  # Для транскрипции голосовых
+BOT_HTTP_PORT=8081     # Порт по умолчанию
+LOG_LEVEL=INFO         # Уровень логирования
 ```
 
-**URL:** http://5.129.236.4:3001/[report-name]
+См. [.env.example](./.env.example) для всех доступных опций.
+
+### Claude CLI
+
+Claude Code CLI установлен глобально и настроен для пользователя `claude-agent`.
+Telegram бот запускает Claude сессии с правильными правами и управлением сессиями.
 
 ---
 
-### 2. WebApp (порт 3005)
+## Документация
 
-**Путь:** `/opt/ai-workspace/apps/webapp/`
-**Технологии:** Next.js 15, TypeScript, @animate-ui, @aceternity, Tailwind CSS
-**Назначение:** Веб-сайты, лендинги с анимациями и визуальными эффектами
+- [apps/telegram-bot/README.md](./apps/telegram-bot/README.md) - Детали Telegram бота
+- [apps/telegram-bot/DEPLOYMENT.md](./apps/telegram-bot/DEPLOYMENT.md) - Руководство по ручной установке
+- [.claude/skills/](./. claude/skills/) - Документация skills
+- [CLAUDE.md](./CLAUDE.md) - Инструкции для Claude Code
 
-**Структура:**
+---
+
+## Детали архитектуры
+
+### Telegram Бот
+
+Бот работает как Docker контейнер и служит мостом между вами и Claude Code:
+
+1. Вы отправляете сообщение в Telegram
+2. Бот получает сообщение и запускает сессию Claude Code
+3. Claude обрабатывает запрос (используя skills при необходимости)
+4. Бот отправляет ответ обратно в Telegram
+
+**Безопасность:** Бот отвечает только на ваш Chat ID (настроенный при установке).
+
+### Система Skills
+
+Skills — это автономные модули, расширяющие возможности Claude:
+
+- **Skill Creator** — мета-skill для создания новых skills
+- **XLSX** — операции с Excel файлами (создание, чтение, изменение)
+- **Image Generation** — AI генерация изображений через Gemini
+- **Telegram Notifier** — отправка уведомлений и файлов
+- **MCP Integration** — подключение внешних сервисов через MCP протокол
+
+Каждый skill содержит:
+- `SKILL.md` - Документация и инструкции для Claude
+- Файлы реализации (Python, JavaScript и т.д.)
+- Конфигурация и зависимости
+
+### Как это работает
+
 ```
-webapp/
-├── frontend/
-│   ├── src/app/
-│   │   ├── [page-name]/       # Каждый сайт = отдельная папка
-│   │   │   └── page.tsx
-│   │   ├── layout.tsx
-│   │   └── globals.css
-│   ├── components/ui/         # shadcn компоненты
-│   ├── Dockerfile
-│   └── package.json
-└── docker-compose.yml
+Сообщение в Telegram
+    ↓
+Бот (Python/aiogram)
+    ↓
+Claude Code Сессия (от имени claude-agent)
+    ↓
+Skills (при необходимости)
+    ↓
+Ответ → Telegram
 ```
 
-**Docker:**
-- Container: `webapp-frontend`
-- Port: `3005:3005`
-- Status: Up
+---
 
-**Команды:**
+## Управление
+
+### Проверка статуса
+
 ```bash
-cd /opt/ai-workspace/apps/webapp
-docker-compose restart          # После создания/изменения страниц
-docker-compose logs -f          # Логи
-docker-compose down && docker-compose up -d --build  # Полный rebuild
+# Проверить работает ли бот
+docker ps | grep telegram-bot
+
+# Посмотреть логи
+docker logs -f ai-workspace-telegram-bot
+
+# Health check
+curl http://localhost:8081/health
 ```
 
-**URL:** http://5.129.236.4:3005/[page-name]
+### Перезапуск бота
 
----
-
-### 3. Telegram Bot (порт 8081)
-
-**Путь:** `/opt/ai-workspace/apps/telegram-bot/`
-**Технологии:** Python 3.11, aiogram, Docker
-**Назначение:** Telegram бот для взаимодействия с Claude Code
-
-**Структура:**
-```
-telegram-bot/
-├── bot.py                     # Основной файл бота
-├── Dockerfile
-├── docker-compose.yml
-├── requirements.txt
-└── .env                       # Токен бота и настройки
-```
-
-**Docker:**
-- Container: `ai-workspace-telegram-bot`
-- Port: `8081:8081` (webhook)
-- User: `claude-agent` (внутри контейнера имеет доступ к docker socket)
-- Status: Up (healthy)
-
-**Команды:**
 ```bash
 cd /opt/ai-workspace/apps/telegram-bot
 docker-compose restart
-docker-compose logs -f telegram-bot
 ```
 
-**Uploads:**
-- Фото: `.claude/skills/telegram-notifier/uploads/photos/`
-- Файлы: `.claude/skills/telegram-notifier/uploads/files/`
-- Автоочистка: cron job в 3:00 удаляет файлы старше 7 дней
+### Обновление конфигурации
 
-**Документация:**
-- [DEPLOYMENT.md](./apps/telegram-bot/DEPLOYMENT.md) - Установка на новом сервере с нуля
-- [SETUP.md](./apps/telegram-bot/SETUP.md) - Быстрая настройка токенов
-- [README.md](./apps/telegram-bot/README.md) - Полное описание возможностей
-
----
-
-## Инфраструктура
-
-### Supabase
-
-**Путь:** `/opt/supabase` (симлинк: `/opt/ai-workspace/supabase`)
-**Компоненты:**
-
-| Service | Container | Port | Status |
-|---------|-----------|------|--------|
-| PostgreSQL | supabase-db | 5432 | Up (healthy) |
-| Kong (API Gateway) | supabase-kong | 8000, 8443 | Up (healthy) |
-| Studio | supabase-studio | 9000 | Up (healthy) |
-| Auth | supabase-auth | - | Up (healthy) |
-| Storage | supabase-storage | 5000 | Up (healthy) |
-| Realtime | supabase-realtime | - | Up (healthy) |
-| Edge Functions | supabase-edge-functions | - | Up |
-
-**Доступ к БД:**
-- Через MCP: `mcp__buisness-database-analiticalo__query` (read-only)
-- Direct PostgreSQL: `localhost:5432` (credentials в .env)
-
-**URLs:**
-- API: https://api.analiticalo.ru (Kong, порт 8443)
-- Studio: https://studio.analiticalo.ru (Nginx → 9000)
-
----
-
-## Сеть и домены
-
-### Текущие URL
-
-| Service | URL | Port | SSL |
-|---------|-----|------|-----|
-| Supabase API | https://api.analiticalo.ru | 8443 | ✅ |
-| Supabase Studio | https://studio.analiticalo.ru | 9000 | ✅ |
-| Dashboard Pages | http://5.129.236.4:3001 | 3001 | ❌ |
-| WebApp | http://5.129.236.4:3005 | 3005 | ❌ |
-
-### Доступные домены для деплоя
-
-- `app.analiticalo.ru` - не используется
-- `dashboard.analiticalo.ru` - не используется
-- `admin.analiticalo.ru` - не используется
-
-### Nginx конфигурация
-
-**Файлы:** `/etc/nginx/sites-available/`, `/etc/nginx/sites-enabled/`
-
-**Текущие конфиги:**
-- `api.analiticalo.ru` → proxy_pass http://localhost:8443 (Kong)
-- `studio.analiticalo.ru` → proxy_pass http://localhost:9000 (Studio)
-
-**Команды:**
 ```bash
-sudo nginx -t                  # Проверить конфигурацию
-sudo systemctl reload nginx    # Применить изменения
-sudo systemctl status nginx    # Статус
+# Редактировать переменные окружения
+nano /opt/ai-workspace/.env
+
+# Перезапустить для применения изменений
+docker-compose restart
 ```
 
 ---
 
-## База данных (PostgreSQL)
+## Решение проблем
 
-### Доступ
+### Бот не отвечает
 
-**Read-Only через MCP:** `mcp__buisness-database-analiticalo__query`
+1. Проверьте что бот запущен: `docker ps | grep telegram-bot`
+2. Посмотрите логи: `docker logs ai-workspace-telegram-bot`
+3. Проверьте токен в `.env`
+4. Перезапустите: `docker-compose restart`
 
-**Direct access:**
-```bash
-# Через Docker
-docker exec -it supabase-db psql -U postgres -d postgres
+### Claude сессии не работают
 
-# Через локальный psql
-psql -h localhost -p 5432 -U postgres -d postgres
-```
+1. Проверьте Claude CLI установлен: `claude --version`
+2. Проверьте существует ли claude-agent: `id claude-agent`
+3. Проверьте права на Docker socket
+4. Посмотрите логи: `docker logs ai-workspace-telegram-bot`
 
-### Основные таблицы
+### Голосовые не транскрибируются
 
-| Таблица | Назначение |
-|---------|------------|
-| `leads` | Заявки клиентов, конверсии |
-| `sales` | Транзакции продаж |
-| `read_before_start_analis` | Документация, бизнес-логика |
-
-**Важно:**
-- Уникальность клиентов: поле `phone`
-- Бизнес-логика конверсий в таблице `read_before_start_analis`
-
----
-
-## Skills и команды
-
-### Skills
-
-**Путь:** `/opt/ai-workspace/.claude/skills/`
-
-Доступные skills:
-- `dashboard-pages-generator` - генерация дашбордов
-- `website-pages-generator` - создание сайтов
-- `analiticalo-db-analytics` - SQL аналитика
-- `xlsx` - работа с Excel
-- `telegram-notifier` - Telegram уведомления
-- `ui-components-library` - UI компоненты
-- `skill-creator` - создание skills
-
-Подробнее: [.claude/SKILLS_QUICK_REFERENCE.md](./.claude/SKILLS_QUICK_REFERENCE.md)
-
-### Slash Commands
-
-**Путь:** `/opt/ai-workspace/.claude/commands/`
-
-Доступные команды:
-- `/tg [текст]` - отправить сообщение в Telegram
-- `/tg-file [путь]` - отправить файл в Telegram
-- `/tg-status` - проверить статус бота
+Транскрипция голосовых требует OpenAI API:
+1. Получите API ключ на https://platform.openai.com/api-keys
+2. Добавьте в `.env`: `OPENAI_API_KEY=sk-...`
+3. Перезапустите бота
 
 ---
 
 ## Безопасность
 
-### Пользователи и права
+- Бот отвечает только настроенному `TELEGRAM_CHAT_ID`
+- HTTP API доступен только локально (127.0.0.1)
+- Секреты хранятся в `.env` (не коммитится в git)
+- Claude сессии запускаются от `claude-agent` (не от root)
+- Docker обеспечивает изоляцию процесса бота
 
-- **Workspace:** работает от `root` (для гибкости разработки)
-- **Telegram bot:** `claude-agent` (имеет доступ к docker socket)
-- **Production apps:** рекомендуется создать `webapp-user`
-
-### Секреты
-
-**Файл:** `/opt/ai-workspace/.env` (НЕ коммитить в git!)
-
-Содержит:
-- Supabase credentials
-- Telegram bot token
-- Database URLs
-- API keys
-
-### Firewall (UFW)
-
-```bash
-sudo ufw status
-sudo ufw allow 22/tcp      # SSH
-sudo ufw allow 80/tcp      # HTTP
-sudo ufw allow 443/tcp     # HTTPS
-sudo ufw allow 8081/tcp    # Telegram webhook
-```
+**Важно:** Держите ваш `.env` файл в безопасности и никогда не коммитьте его в систему контроля версий.
 
 ---
 
-## Разработка
+## Системные требования
 
-### Создание нового приложения
+### Минимальные
 
-1. Создай директорию в `apps/[app-name]/`
-2. Добавь `docker-compose.yml`
-3. Настрой порт (используй 3000-3999)
-4. Создай `.claude/` для app-specific команд (опционально)
+- CPU: 2 ядра
+- RAM: 2 GB
+- Диск: 10 GB свободного места
+- ОС: Ubuntu 22.04+ / Debian 11+
 
-### Деплой на домен
+### Рекомендуемые
 
-1. Создай Nginx конфиг:
-```bash
-sudo nano /etc/nginx/sites-available/subdomain.analiticalo.ru
-```
-
-2. Настрой proxy_pass:
-```nginx
-server {
-    listen 80;
-    server_name subdomain.analiticalo.ru;
-
-    location / {
-        proxy_pass http://localhost:PORT;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-    }
-}
-```
-
-3. Включи конфиг:
-```bash
-sudo ln -s /etc/nginx/sites-available/subdomain.analiticalo.ru /etc/nginx/sites-enabled/
-sudo nginx -t
-sudo systemctl reload nginx
-```
-
-4. Получи SSL сертификат:
-```bash
-sudo certbot --nginx -d subdomain.analiticalo.ru
-```
-
-### Добавление нового skill
-
-```bash
-cd /opt/ai-workspace/.claude/skills
-python3 ../../../.claude/skills/skill-creator/scripts/init_skill.py skill-name --path .
-```
-
-См. [skill-creator/SKILL.md](./.claude/skills/skill-creator/SKILL.md)
+- CPU: 4 ядра
+- RAM: 4 GB
+- Диск: 20 GB свободного места (SSD)
+- ОС: Ubuntu 24.04 LTS
 
 ---
 
-## Мониторинг
+## Стоимость
 
-### Docker
+### Что включено
 
-```bash
-# Все контейнеры
-docker ps -a
+- Программное обеспечение AI Workspace (разовая покупка или подписка)
+- Telegram бот
+- Базовые skills
+- Документация и поддержка
 
-# Конкретное приложение
-docker ps | grep dashboard
-docker ps | grep webapp
-docker ps | grep telegram
+### Что оплачивается отдельно
 
-# Логи
-docker logs -f container-name
-docker-compose logs -f service-name
-
-# Статистика
-docker stats
-```
-
-### Nginx
-
-```bash
-# Логи доступа
-sudo tail -f /var/log/nginx/access.log
-
-# Логи ошибок
-sudo tail -f /var/log/nginx/error.log
-
-# Статус
-sudo systemctl status nginx
-```
-
-### Диск
-
-```bash
-df -h                          # Общее использование
-du -sh /opt/ai-workspace/*     # По директориям
-docker system df               # Docker использование
-
-# Очистка Docker
-docker system prune -a         # Удалить неиспользуемые образы
-```
+- **Claude API** — платите Anthropic напрямую ($20/месяц за Claude Pro или pay-as-you-go)
+- **VPS хостинг** — арендуйте свой сервер ($5-20/месяц обычно)
+- **OpenAI API** — опционально, только для транскрипции голосовых ($0.006/минуту)
 
 ---
 
-## Backup
+## Поддержка
 
-### База данных
-
-```bash
-# Через Docker
-docker exec supabase-db pg_dump -U postgres -d postgres > backup.sql
-
-# Восстановление
-docker exec -i supabase-db psql -U postgres -d postgres < backup.sql
-```
-
-### Приложения
-
-```bash
-# Резервная копия workspace
-tar -czf ai-workspace-backup-$(date +%Y%m%d).tar.gz /opt/ai-workspace \
-  --exclude='node_modules' \
-  --exclude='.next' \
-  --exclude='logs'
-```
+- **Email:** support@your-domain.com
+- **Документация:** https://docs.your-domain.com
+- **Telegram сообщество:** @your_community_group
+- **GitHub Issues:** (если применимо)
 
 ---
 
-## Troubleshooting
+## Лицензия
 
-### Проблема: Порт занят
-
-```bash
-# Найти процесс на порту
-sudo lsof -ti:3001
-sudo lsof -ti:3005
-
-# Убить процесс
-sudo kill -9 $(lsof -ti:3001)
-```
-
-### Проблема: 404 после создания страницы
-
-**Причина:** Забыли перезапустить Docker
-
-**Решение:**
-```bash
-cd /opt/ai-workspace/apps/dashboard-pages
-docker-compose restart
-
-# Проверка
-curl -I http://5.129.236.4:3001/page-name
-```
-
-### Проблема: Docker контейнер unhealthy
-
-```bash
-# Проверить логи
-docker logs container-name
-
-# Перезапустить
-docker restart container-name
-
-# Полный rebuild
-cd /opt/ai-workspace/apps/[app-name]
-docker-compose down
-docker-compose up -d --build
-```
-
-### Проблема: Нет места на диске
-
-```bash
-# Проверить использование
-df -h
-
-# Очистить Docker
-docker system prune -a -f
-docker volume prune -f
-
-# Очистить логи
-sudo journalctl --vacuum-time=7d
-```
+Коммерческая лицензия. См. [LICENSE](./LICENSE) для деталей.
 
 ---
 
-## Tech Stack
+## Благодарности
 
-| Категория | Технологии |
-|-----------|-----------|
-| **Backend** | Supabase (PostgreSQL + API), Python (Telegram bot) |
-| **Frontend** | Next.js 15, React 18, TypeScript |
-| **UI** | Tailwind CSS, shadcn UI, @animate-ui, @aceternity |
-| **Визуализация** | Recharts |
-| **Deployment** | Docker Compose, Nginx, Let's Encrypt |
-| **Интеграция** | MCP (Model Context Protocol) |
-| **Бот** | aiogram (Python) |
+Создано с использованием:
+- [Claude Code](https://claude.com/code) от Anthropic
+- [aiogram](https://docs.aiogram.dev/) - фреймворк для Telegram ботов
+- [Docker](https://www.docker.com/) - контейнеризация
+- [Node.js](https://nodejs.org/) - среда выполнения для Claude CLI
 
 ---
 
-## Полезные ссылки
+## История изменений
 
-- **Claude Code Docs:** https://docs.claude.com/claude-code
-- **Supabase Docs:** https://supabase.com/docs
-- **Next.js Docs:** https://nextjs.org/docs
-- **shadcn UI:** https://ui.shadcn.com
-- **Recharts:** https://recharts.org
-
----
-
-## Changelog
-
-- **2025-11-04:** Реструктуризация документации (CLAUDE.md + README.md)
-- **2025-11-03:** Добавлен webapp (порт 3005)
-- **2025-11-02:** Создан dashboard-pages (порт 3001)
-- **2025-11-01:** Первоначальная настройка workspace
+### v1.0.0 (2026-01-XX)
+- Первый релиз
+- Интеграция с Telegram ботом
+- 5 базовых skills (Excel, изображения, Telegram, создание skills, MCP)
+- Автоматический установщик
+- Документация
 
 ---
 
-**Для инструкций Claude Code см. [CLAUDE.md](./CLAUDE.md)**
+**Сделано с ❤️ для энтузиастов AI**
+
+Начните сегодня и превратите свой сервер в мощного AI помощника!

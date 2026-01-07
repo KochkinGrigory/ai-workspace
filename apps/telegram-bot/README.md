@@ -28,7 +28,7 @@
 
 1. Открой Telegram, найди **@BotFather**
 2. Отправь `/newbot`
-3. Назови бота (например: "Analiticalo Workspace Bot")
+3. Назови бота (например: "My AI Workspace Bot")
 4. Придумай username (например: `my_workspace_bot`)
 5. Получишь **токен** вида: `1234567890:ABCdefGHIjklMNOpqrsTUVwxyz`
 

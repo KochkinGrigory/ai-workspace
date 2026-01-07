@@ -1,0 +1,73 @@
+# Фирменная цветовая палитра
+
+## Primary Colors
+
+Primary Blue
+HEX: #0066CC
+RGB: 0, 102, 204
+Description: Основной фирменный цвет
+Usage: Заголовки, кнопки, ключевые акценты, логотип
+
+Secondary Orange
+HEX: #FF6600
+RGB: 255, 102, 0
+Description: Дополнительный акцентный цвет
+Usage: Вторичные элементы, иконки, выделения, графики
+
+## Neutral Colors
+
+Dark Gray (Text)
+HEX: #333333
+RGB: 51, 51, 51
+Usage: Основной текст, заголовки
+
+Medium Gray
+HEX: #777777
+RGB: 119, 119, 119
+Usage: Вторичный текст, подписи
+
+Light Gray (Background)
+HEX: #F5F5F5
+RGB: 245, 245, 245
+Usage: Фоны секций, карточки
+
+White
+HEX: #FFFFFF
+RGB: 255, 255, 255
+Usage: Основные фоны, текст на темном
+
+## Accent Colors
+
+Success Green
+HEX: #00CC66
+RGB: 0, 204, 102
+Usage: Успешные действия, положительные метрики
+
+Warning Yellow
+HEX: #FFCC00
+RGB: 255, 204, 0
+Usage: Предупреждения, важная информация
+
+Error Red
+HEX: #CC0000
+RGB: 204, 0, 0
+Usage: Ошибки, критические сообщения
+
+## Color Combinations
+
+### Презентации
+Background: White (#FFFFFF)
+Text: Dark Gray (#333333)
+Accents: Primary Blue (#0066CC)
+Highlights: Secondary Orange (#FF6600)
+
+### Инфографика
+Background: Light Gray (#F5F5F5)
+Data colors: Primary Blue, Secondary Orange, Success Green
+Text: Dark Gray (#333333)
+Labels: Medium Gray (#777777)
+
+### Social Media
+Background: Gradient from Primary Blue to Light variation
+Text: White (#FFFFFF)
+Accent: Secondary Orange (#FF6600)

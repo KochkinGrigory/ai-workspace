@@ -15,7 +15,7 @@
 
 4. **Назови бота** (display name)
    ```
-   Пример: Analiticalo Workspace Bot
+   Пример: My AI Workspace Bot
    ```
 
 5. **Придумай username** (должен заканчиваться на 'bot')

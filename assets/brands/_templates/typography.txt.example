@@ -1,0 +1,114 @@
+# Типографика
+
+## Primary Font
+
+Font Family: Inter
+Style: Sans-serif, Modern, Geometric
+Usage: Все заголовки, UI элементы, кнопки, навигация
+Weights Available: Regular (400), Medium (500), Semibold (600), Bold (700)
+Fallback: system-ui, -apple-system, sans-serif
+
+## Secondary Font
+
+Font Family: Georgia
+Style: Serif, Classic, Readable
+Usage: Длинные тексты, статьи, документы
+Weights Available: Regular (400), Italic (400), Bold (700)
+Fallback: Times New Roman, serif
+
+## Monospace Font
+
+Font Family: Fira Code
+Style: Monospace, Technical
+Usage: Код, технические данные, таблицы с цифрами
+Weights Available: Regular (400), Medium (500)
+Fallback: Courier New, monospace
+
+## Size Scale
+
+### Headings
+H1 (Main Title): 48-64px, Bold (700), Inter
+H2 (Section Title): 36-42px, Semibold (600), Inter
+H3 (Subsection): 28-32px, Semibold (600), Inter
+H4 (Card Title): 20-24px, Medium (500), Inter
+
+### Body Text
+Large Body: 18-20px, Regular (400), Georgia or Inter
+Regular Body: 16-18px, Regular (400), Georgia or Inter
+Small Body: 14-16px, Regular (400), Inter
+Caption: 12-14px, Regular (400), Inter
+
+### UI Elements
+Button Text: 14-16px, Medium (500), Inter
+Navigation: 14-16px, Medium (500), Inter
+Labels: 12-14px, Medium (500), Inter
+Tooltip: 12px, Regular (400), Inter
+
+## Line Height (Leading)
+
+Headings: 1.2 (tight for impact)
+Body Text: 1.6 (comfortable for reading)
+Captions: 1.4
+UI Elements: 1.5
+
+## Letter Spacing (Tracking)
+
+Headings: -0.02em (slightly tighter)
+Body Text: 0 (default)
+All Caps: 0.05em (slightly wider for readability)
+Small Text (<14px): 0.01em
+
+## Text Alignment
+
+Primary Content: Left-aligned
+Headings: Can be centered for emphasis
+Short Quotes: Can be centered
+Tables/Data: Left for text, right for numbers
+UI Buttons: Center
+
+## Rules and Best Practices
+
+1. Never use more than 2 font families in one design
+2. Maintain consistent line height within text blocks
+3. Use font weight (not size only) to create hierarchy
+4. Ensure minimum 16px for body text (accessibility)
+5. Maximum line length: 60-80 characters for readability
+6. Use true italics, not slanted regular fonts
+7. Avoid letter spacing <-0.05em (too tight)
+8. Use semibold (600) instead of bold (700) for subtle emphasis
+
+## Forbidden
+
+❌ Comic Sans, Papyrus, decorative fonts
+❌ Stretched or condensed text
+❌ Faux bold (double-stroke)
+❌ All caps for long text (max 3-4 words)
+❌ Colored text on colored background without sufficient contrast
+❌ Too many font sizes (stick to the scale)
+❌ Underlining (except links)
+❌ Center-aligned body text (hard to read)
+
+## Specific Use Cases
+
+### Presentations
+Titles: Inter Bold, 48-64px
+Subtitles: Inter Medium, 24-32px
+Body: Inter Regular, 18-20px
+Maximum 3 levels of hierarchy per slide
+
+### Infographics
+Titles: Inter Bold, 36-48px, uppercase if short
+Data Labels: Inter Semibold, 14-18px
+Descriptions: Inter Regular, 14-16px
+Numbers: Inter Bold or Fira Code Medium
+
+### Documents/Reports
+Title: Inter Bold, 36-42px
+Headings: Inter Semibold, 24-28px
+Body: Georgia Regular, 16-18px, line-height 1.6
+Captions: Inter Regular, 12-14px
+
+### Social Media
+Primary Text: Inter Bold, 32-48px (high impact)
+Secondary: Inter Regular, 16-20px
+Very short text preferred (3-7 words max)

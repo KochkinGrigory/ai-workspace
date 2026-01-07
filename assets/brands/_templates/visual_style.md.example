@@ -1,0 +1,177 @@
+# Визуальный стиль
+
+## Общая эстетика
+
+**Design Style:** Minimalist Modern
+**Mood:** Clean, Professional, Trustworthy, Approachable
+**Inspiration:** Swiss Design, Flat Design 2.0, Material Design principles
+**Era:** Contemporary (2020s)
+
+## Core Design Principles
+
+### 1. Simplicity
+- Minimum elements on screen
+- Clear visual hierarchy
+- Generous white space (never cramped)
+- Focus on content, not decoration
+- "Less is more" philosophy
+
+### 2. Geometry & Structure
+- Clean geometric shapes (rectangles, circles, minimal curves)
+- Rounded corners: 8-12px for cards, 4-6px for buttons
+- 8px grid system for alignment
+- Rule of thirds for composition
+- Consistent spacing multiples (8, 16, 24, 32, 48, 64px)
+
+### 3. Color Usage
+- Color carries meaning (not decorative)
+- Limited palette (3-4 colors maximum per design)
+- High contrast for accessibility (WCAG AA minimum)
+- Neutral backgrounds (white, light gray)
+- Accent colors used sparingly for emphasis
+
+### 4. Typography
+- Strong typographic hierarchy
+- Sans-serif for modern feel
+- Sufficient size for readability (min 16px body)
+- Ample line spacing (1.5-1.6 for body)
+- Left-aligned text for easy scanning
+
+## Layout & Composition
+
+### Grid System
+- 12-column grid for web layouts
+- 8px baseline grid for vertical rhythm
+- Consistent margins and gutters
+- Symmetry or intentional asymmetry (never random)
+
+### Spacing Philosophy
+- Base unit: 8px
+- Standard spacing: 16px, 24px, 32px, 48px
+- Never use odd numbers (keeps alignment clean)
+- Consistent rhythm and pattern
+
+### Visual Hierarchy
+- Size: Larger = more important
+- Weight: Bolder = more important
+- Color: Accent color = focus point
+- Position: Top-left gets most attention (F-pattern)
+- Contrast: High contrast = draws attention
+
+### Depth & Elevation
+- Minimal shadows (subtle only)
+- Shadow: 0 2px 8px rgba(0,0,0,0.1) for cards
+- Shadow: 0 4px 16px rgba(0,0,0,0.15) for modals
+- Maximum 3 elevation levels
+- Avoid heavy drop shadows
+
+## Design Elements
+
+### Icons
+- Style: Line art, minimalist, geometric
+- Stroke width: 2px consistent
+- Size: Multiples of 24px (24, 48, 72, 96)
+- Style consistency crucial (all from same set)
+- Match brand personality (friendly but professional)
+
+### Photography
+- Style: Natural, professional, authentic
+- Lighting: Soft natural light or professional studio
+- Composition: Rule of thirds, balanced
+- Colors: Natural tones, minimal editing
+- Avoid: Stock photo "generic" look, overly posed
+
+### Illustrations
+- Style: Flat design or isometric
+- Colors: From brand palette only
+- Complexity: Medium (not overly simple, not too detailed)
+- Consistency: Same style throughout project
+- Purpose: Support message, not decoration
+
+### Shapes & Forms
+- Primary shapes: Rectangles, circles
+- Rounded corners preferred over sharp
+- Avoid: Irregular shapes, complex curves
+- Alignment: Always aligned to grid
+
+## What to Avoid
+
+❌ Gradients (except subtle backgrounds: light to slightly lighter)
+❌ Textures and patterns (unless brand-specific and subtle)
+❌ Heavy shadows and 3D effects
+❌ Too many colors (more than 4)
+❌ Decorative elements without function
+❌ Cluttered layouts with no white space
+❌ Low contrast text (below WCAG AA)
+❌ Inconsistent styling
+❌ Trendy effects that date quickly
+
+## Application Examples
+
+### Presentations
+- Clean white background
+- One key visual per slide
+- Minimal text (bullet points only)
+- Large, bold headings
+- Brand colors for accents only
+- Plenty of white space around elements
+- Professional photos or simple icons
+- Consistent slide template
+
+### Infographics
+- Modular grid layout
+- Color-coded sections
+- Icons in consistent style
+- Clear information hierarchy
+- Data visualization: clean, simple charts
+- Sufficient white space between sections
+- Brand colors used systematically
+- Easy visual flow (top to bottom or left to right)
+
+### Social Media Posts
+- Bold, attention-grabbing headline
+- One key visual element
+- Minimal text (3-7 words ideal)
+- High contrast for mobile viewing
+- Square (1:1) or landscape (16:9) format
+- Brand colors prominent
+- Clear call-to-action if needed
+
+### Documents/Reports
+- Professional cover page
+- Consistent page template
+- Clear section breaks
+- Tables: clean, aligned, minimal borders
+- Charts: simple, color-coded
+- Headers and footers consistent
+- Page numbers
+- Brand colors in headers/accents
+
+## Brand Personality Through Design
+
+**Professional** → Clean layouts, structured grid, consistent spacing
+**Approachable** → Rounded corners, friendly typography, warm accent colors
+**Modern** → Sans-serif fonts, flat design, contemporary color palette
+**Trustworthy** → High quality imagery, professional photography, clear hierarchy
+
+## Technical Specifications
+
+### File Formats
+- Vector: SVG (preferred for logos, icons)
+- Raster: PNG (for images with transparency)
+- Photos: JPG (high quality, 85-95% compression)
+
+### Resolution
+- Screen: 72-96 DPI
+- Print: 300 DPI minimum
+- Images: 2x size of display (for retina screens)
+
+### Color Space
+- Digital: RGB
+- Print: CMYK (convert from RGB using ICC profiles)
+
+### Accessibility
+- Text contrast: Minimum 4.5:1 for body, 3:1 for large text
+- Focus indicators visible
+- Touch targets minimum 44x44px
+- Color not sole indicator of information
