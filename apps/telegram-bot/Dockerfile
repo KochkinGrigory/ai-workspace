@@ -9,8 +9,9 @@ WORKDIR /app
 # - procps (для команды ps, нужна Claude CLI)
 # - docker.io (для docker команд из контейнера)
 # - ffmpeg (для конвертации аудио .oga -> .mp3 для Whisper API)
+# - tini (init процесс для сбора zombie процессов)
 RUN apt-get update && \
-    apt-get install -y curl sudo postgresql-client procps docker.io ffmpeg && \
+    apt-get install -y curl sudo postgresql-client procps docker.io ffmpeg tini && \
     curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
     apt-get install -y nodejs && \
     apt-get clean && \
@@ -44,6 +45,9 @@ RUN mkdir -p /app/logs
 # Переменные окружения по умолчанию
 ENV PYTHONUNBUFFERED=1
 ENV LOG_LEVEL=INFO
+
+# tini как init процесс (собирает zombie процессы)
+ENTRYPOINT ["/usr/bin/tini", "--"]
 
 # Запуск бота
 CMD ["python", "src/bot.py"]
