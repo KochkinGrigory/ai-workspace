@@ -8,12 +8,17 @@
 .env.*.local
 
 # Claude CLI configuration (user-specific)
-.claude/
+# Игнорируем содержимое .claude/, но НЕ саму папку
+.claude/*
 !.claude/skills/
 !.claude/commands/
-.claude/logs/
-.claude/todos/
-.claude/.credentials.json
+!.claude/settings.local.json
+
+# Игнорируем внутри skills временные и загрузочные файлы
+.claude/skills/**/tmp/
+.claude/skills/**/uploads/files/*
+.claude/skills/**/uploads/photos/*
+!.claude/skills/**/uploads/**/.gitkeep
 
 # Logs
 logs/

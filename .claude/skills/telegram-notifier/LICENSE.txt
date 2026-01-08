@@ -1,0 +1,8 @@
+Proprietary License
+
+Copyright (c) 2024 AI Workspace
+
+This skill is part of the AI Workspace project and is proprietary software.
+Unauthorized copying, distribution, or modification is prohibited.
+
+For internal use only.
