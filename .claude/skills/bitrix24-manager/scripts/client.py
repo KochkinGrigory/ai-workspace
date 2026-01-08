@@ -91,23 +91,75 @@ class BitrixClient:
         except json.JSONDecodeError as e:
             raise BitrixAPIError(f"JSON Decode Error: {str(e)}")
 
-    def batch(self, calls: Dict[str, Dict[str, Any]]) -> Dict[str, Any]:
-        """Выполнить пакетный запрос (batch)"""
-        cmd = {}
-        for cmd_id, call_data in calls.items():
-            method = call_data['method']
-            params = call_data.get('params', {})
-            cmd[cmd_id] = f"{method}?{self._encode_params(params)}"
+    def batch(self, commands: list) -> Dict[str, Any]:
+        """
+        Выполнить пакетный запрос (до 50 команд за раз)
 
-        return self.call('batch', {'cmd': cmd})
+        Args:
+            commands: Список кортежей (method, params) или строк 'method?params'
+
+        Returns:
+            {'cmd1': result1, 'cmd2': result2, ...}
+
+        Example:
+            results = client.batch([
+                ('tasks.task.get', {'taskId': 100}),
+                ('tasks.task.get', {'taskId': 101}),
+                ('user.current', {}),
+            ])
+        """
+        cmd = {}
+        for i, item in enumerate(commands):
+            cmd_id = f'cmd{i}'
+            if isinstance(item, str):
+                cmd[cmd_id] = item
+            elif isinstance(item, tuple):
+                method, params = item[0], item[1] if len(item) > 1 else {}
+                cmd[cmd_id] = f"{method}?{self._encode_params(params)}"
+
+        result = self.call('batch', {'halt': 0, 'cmd': cmd})
+
+        # Преобразуем результат в удобный формат
+        if isinstance(result, dict) and 'result' in result:
+            return result['result']
+        return result
+
+    def batch_complete_tasks(self, task_ids: list) -> Dict[str, Any]:
+        """Завершить несколько задач за один запрос"""
+        commands = [('tasks.task.complete', {'taskId': tid}) for tid in task_ids]
+        return self.batch(commands)
+
+    def batch_get_tasks(self, task_ids: list) -> list:
+        """Получить несколько задач за один запрос"""
+        commands = [('tasks.task.get', {'taskId': tid}) for tid in task_ids]
+        results = self.batch(commands)
+        return [r.get('task', r) for r in results.values() if r]
+
+    def batch_notify(self, notifications: list) -> Dict[str, Any]:
+        """
+        Отправить несколько уведомлений за один запрос
+
+        Args:
+            notifications: Список кортежей (user_id, message)
+        """
+        commands = [
+            ('im.notify.personal.add', {'USER_ID': uid, 'MESSAGE': msg})
+            for uid, msg in notifications
+        ]
+        return self.batch(commands)
 
     @staticmethod
     def _encode_params(params: Dict[str, Any]) -> str:
+        """Кодирование параметров для batch URL"""
+        from urllib.parse import quote
         parts = []
         for key, value in params.items():
             if isinstance(value, dict):
                 for sub_key, sub_value in value.items():
-                    parts.append(f"{key}[{sub_key}]={sub_value}")
+                    parts.append(f"{key}[{sub_key}]={quote(str(sub_value))}")
+            elif isinstance(value, list):
+                for i, item in enumerate(value):
+                    parts.append(f"{key}[{i}]={quote(str(item))}")
             else:
-                parts.append(f"{key}={value}")
+                parts.append(f"{key}={quote(str(value))}")
         return '&'.join(parts)
