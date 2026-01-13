@@ -77,8 +77,8 @@ notification_8h_sent = False
 # Активный процесс Claude (для возможности остановки)
 active_claude_process = None
 
-# Текущая модель Claude (по умолчанию sonnet - умный режим)
-current_model = "sonnet"
+# Текущая модель Claude (по умолчанию opus - умный режим)
+current_model = "opus"
 
 # Флаг блокировки параллельных сессий
 is_processing = False
@@ -1124,8 +1124,12 @@ async def cmd_status(message: Message):
     session_id = read_active_session()
 
     # Эмодзи и название режима
-    model_emoji = "⚡️" if current_model == "haiku" else "🧠"
-    model_name = "Быстрый" if current_model == "haiku" else "Умный"
+    if current_model == "haiku":
+        model_emoji, model_name = "⚡️", "Быстрый"
+    elif current_model == "opus":
+        model_emoji, model_name = "🧠", "Умный"
+    else:  # sonnet
+        model_emoji, model_name = "⚖️", "Оптимальный"
 
     session_info = f"📝 Сессия: <code>{session_id[:8]}...</code>" if session_id else "📝 Сессия: нет"
 
@@ -1309,19 +1313,36 @@ async def cmd_fast(message: Message):
     )
 
 
-@router.message(Command("smart"))
-async def cmd_smart(message: Message):
-    """Обработчик команды /smart - переключает на умный режим (sonnet)"""
+@router.message(Command("optimal"))
+async def cmd_optimal(message: Message):
+    """Обработчик команды /optimal - переключает на оптимальный режим (sonnet)"""
     if message.chat.id != ALLOWED_CHAT_ID:
         return
 
     set_model("sonnet")
     await message.answer(
-        "🧠 <b>Режим: Умный</b>\n\n"
+        "⚖️ <b>Режим: Оптимальный</b>\n\n"
         "Модель: <code>sonnet</code>\n"
-        "• Более глубокие ответы\n"
-        "• Лучшее качество кода\n"
-        "• Подходит для сложных задач",
+        "• Баланс скорости и качества\n"
+        "• Хорошее качество кода\n"
+        "• Подходит для большинства задач",
+        parse_mode="HTML"
+    )
+
+
+@router.message(Command("smart"))
+async def cmd_smart(message: Message):
+    """Обработчик команды /smart - переключает на умный режим (opus)"""
+    if message.chat.id != ALLOWED_CHAT_ID:
+        return
+
+    set_model("opus")
+    await message.answer(
+        "🧠 <b>Режим: Умный</b>\n\n"
+        "Модель: <code>opus</code>\n"
+        "• Максимальное качество\n"
+        "• Глубокий анализ\n"
+        "• Лучшее для сложных задач",
         parse_mode="HTML"
     )
 
@@ -2229,8 +2250,9 @@ async def set_bot_commands():
         BotCommand(command="stop", description="⏸ Остановить выполнение"),
         BotCommand(command="end", description="❌ Завершить сессию"),
         BotCommand(command="restart", description="🔄 Перезапустить бота"),
-        BotCommand(command="fast", description="⚡️ Быстрый режим (Haiku)"),
-        BotCommand(command="smart", description="🧠 Умный режим (Sonnet)"),
+        BotCommand(command="fast", description="⚡️ Быстрый (Haiku)"),
+        BotCommand(command="optimal", description="⚖️ Оптимальный (Sonnet)"),
+        BotCommand(command="smart", description="🧠 Умный (Opus)"),
         BotCommand(command="multi", description="📝 Режим накопления сообщений"),
     ]
     await bot.set_my_commands(commands)
