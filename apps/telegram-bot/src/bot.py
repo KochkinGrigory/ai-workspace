@@ -343,7 +343,7 @@ async def start_new_session(user_prompt: str, files: list[dict] = None):
 
         try:
             # Запускаем Claude Code в headless режиме
-            cmd = f'sudo -u claude-agent bash -c "cd {CLAUDE_WORKING_DIR} && cat {tmp_file} | {CLAUDE_CLI_PATH} --model {current_model} --dangerously-skip-permissions -p - --output-format json"'
+            cmd = f'export IS_SANDBOX=1 && cd {CLAUDE_WORKING_DIR} && cat {tmp_file} | {CLAUDE_CLI_PATH} --model {current_model} --dangerously-skip-permissions -p - --output-format json'
 
             active_claude_process = await asyncio.create_subprocess_shell(
                 cmd,
@@ -491,7 +491,7 @@ async def resume_session(session_id: str, user_prompt: str, files: list[dict] = 
 
         try:
             # Запускаем Claude с --resume
-            cmd = f'sudo -u claude-agent bash -c "cd {CLAUDE_WORKING_DIR} && cat {tmp_file} | {CLAUDE_CLI_PATH} --model {current_model} --dangerously-skip-permissions --resume {session_id} -p - --output-format json"'
+            cmd = f'export IS_SANDBOX=1 && cd {CLAUDE_WORKING_DIR} && cat {tmp_file} | {CLAUDE_CLI_PATH} --model {current_model} --dangerously-skip-permissions --resume {session_id} -p - --output-format json'
 
             active_claude_process = await asyncio.create_subprocess_shell(
                 cmd,
