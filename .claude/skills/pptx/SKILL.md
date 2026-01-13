@@ -116,6 +116,52 @@ python3 /opt/ai-workspace/.claude/skills/nano-banana-image-gen/scripts/edit.py e
 
 ---
 
+## Конвертация в PDF
+
+Для конвертации PPTX в PDF используй скрипт `pptx2pdf.py`. Он автоматически проверяет шрифты и устанавливает отсутствующие.
+
+### Использование
+
+```bash
+# Базовая конвертация (PDF создаётся рядом с PPTX)
+python3 scripts/pptx2pdf.py presentation.pptx
+
+# С указанием выходного файла
+python3 scripts/pptx2pdf.py presentation.pptx --output report.pdf
+
+# Только проверить шрифты (без конвертации)
+python3 scripts/pptx2pdf.py presentation.pptx --check-only
+
+# Без автоматической установки шрифтов
+python3 scripts/pptx2pdf.py presentation.pptx --no-install
+```
+
+### Что делает скрипт
+
+1. **Анализирует PPTX** — извлекает список используемых шрифтов
+2. **Проверяет систему** — какие шрифты установлены через `fc-list`
+3. **Устанавливает недостающие** — через apt или скачивает напрямую
+4. **Конвертирует** — через LibreOffice headless (`soffice --convert-to pdf`)
+
+### Поддерживаемые шрифты для автоустановки
+
+| Шрифт | Метод установки |
+|-------|-----------------|
+| Manrope | apt: fonts-manrope |
+| Arial | Скачивание TTF |
+| Times New Roman | Скачивание TTF |
+| Liberation Sans/Serif | apt: fonts-liberation |
+| DejaVu Sans | apt: fonts-dejavu |
+
+### Важно о шрифтах
+
+- **Manrope** — рекомендуемый шрифт по умолчанию (установлен в системе)
+- **Arial** — может потребовать ручной установки
+- Если шрифт не установлен, LibreOffice заменит на fallback
+- Всегда проверяй `--check-only` перед важной конвертацией
+
+---
+
 ## Reading and analyzing content
 
 ### Text extraction
