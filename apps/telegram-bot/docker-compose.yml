@@ -1,6 +1,12 @@
 services:
   telegram-bot:
-    build: .
+    build:
+      context: .
+      args:
+        # UID/GID должны совпадать с хостом для правильной работы с файлами
+        # Узнать: id claude-agent
+        CLAUDE_UID: 994
+        CLAUDE_GID: 986
     container_name: ai-workspace-telegram-bot
     restart: unless-stopped
     env_file:

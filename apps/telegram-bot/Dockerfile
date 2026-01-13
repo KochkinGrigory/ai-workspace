@@ -11,7 +11,7 @@ WORKDIR /app
 # - ffmpeg (для конвертации аудио .oga -> .mp3 для Whisper API)
 # - tini (init процесс для сбора zombie процессов)
 RUN apt-get update && \
-    apt-get install -y curl sudo postgresql-client procps docker.io ffmpeg tini && \
+    apt-get install -y curl sudo postgresql-client procps docker.io ffmpeg tini jq && \
     curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
     apt-get install -y nodejs && \
     apt-get clean && \

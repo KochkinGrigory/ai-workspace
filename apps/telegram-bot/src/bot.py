@@ -351,19 +351,33 @@ async def start_new_session(user_prompt: str, files: list[dict] = None):
                 stderr=asyncio.subprocess.PIPE
             )
 
-            stdout, stderr = await active_claude_process.communicate()
+            # Сохраняем локальную ссылку (защита от race condition с stop_claude_process)
+            local_process = active_claude_process
+            stdout, stderr = await local_process.communicate()
         finally:
             # Удаляем временный файл
             os.remove(tmp_file)
 
-        if active_claude_process.returncode != 0:
+        # Используем локальную ссылку (active_claude_process может быть None после stop_claude_process)
+        if local_process.returncode != 0:
             error_msg = stderr.decode()
             logger.error(f"Claude failed: {error_msg}")
             active_claude_process = None  # Очищаем при ошибке
 
-            # Проверяем: был ли процесс остановлен пользователем (/stop)?
+            # Проверяем: был ли процесс остановлен пользователем (/stop или /tg-ask)?
             if is_stopping:
-                logger.info("Процесс был остановлен пользователем - выход без ошибки")
+                logger.info("Процесс был остановлен пользователем - пробуем сохранить session_id")
+                # Попытаемся извлечь session_id из stdout даже при остановке
+                try:
+                    stdout_text = stdout.decode()
+                    if stdout_text.strip():
+                        data = json.loads(stdout_text)
+                        session_id = data.get("session_id")
+                        if session_id:
+                            save_session_id(session_id)
+                            logger.info(f"Session ID сохранён при остановке: {session_id}")
+                except Exception as e:
+                    logger.debug(f"Не удалось извлечь session_id при остановке: {e}")
                 return
 
             raise Exception(f"Claude execution failed: {error_msg}")
@@ -485,19 +499,22 @@ async def resume_session(session_id: str, user_prompt: str, files: list[dict] = 
                 stderr=asyncio.subprocess.PIPE
             )
 
-            stdout, stderr = await active_claude_process.communicate()
+            # Сохраняем локальную ссылку (защита от race condition с stop_claude_process)
+            local_process = active_claude_process
+            stdout, stderr = await local_process.communicate()
         finally:
             # Удаляем временный файл
             os.remove(tmp_file)
 
-        if active_claude_process.returncode != 0:
+        # Используем локальную ссылку (active_claude_process может быть None после stop_claude_process)
+        if local_process.returncode != 0:
             error_msg = stderr.decode()
             logger.error(f"Claude resume failed: {error_msg}")
             active_claude_process = None  # Очищаем при ошибке
 
-            # Проверяем: был ли процесс остановлен пользователем (/stop)?
+            # Проверяем: был ли процесс остановлен пользователем (/stop или /tg-ask)?
             if is_stopping:
-                logger.info("Процесс был остановлен пользователем - выход без создания новой сессии")
+                logger.info(f"Процесс был остановлен пользователем - сессия {session_id} сохранена")
                 return
 
             # Сессия протухла естественным образом - создаём новую
@@ -1208,6 +1225,8 @@ async def cmd_stop(message: Message):
 @router.message(Command("end"))
 async def cmd_end(message: Message):
     """Обработчик команды /end - завершает сессию полностью"""
+    global pending_question
+
     if message.chat.id != ALLOWED_CHAT_ID:
         return
 
@@ -1216,8 +1235,9 @@ async def cmd_end(message: Message):
     # Останавливаем процесс если работает
     stopped = await stop_claude_process()
 
-    # Очищаем session_id
+    # Очищаем session_id и pending_question
     clear_session()
+    pending_question = None
 
     if session_id:
         msg = f"✅ <b>Сессия завершена</b>\n\n"
@@ -1236,14 +1256,17 @@ async def cmd_end(message: Message):
 @router.message(Command("restart"))
 async def cmd_restart(message: Message):
     """Обработчик команды /restart - перезапускает контейнер бота"""
+    global pending_question
+
     if message.chat.id != ALLOWED_CHAT_ID:
         return
 
     # Останавливаем активный процесс если есть
     await stop_claude_process()
 
-    # Очищаем сессию
+    # Очищаем сессию и pending_question
     clear_session()
+    pending_question = None
 
     # Отправляем сообщение перед перезапуском
     await message.answer(

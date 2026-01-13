@@ -49,8 +49,8 @@ version: 1.1.0
 ```tsx
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis, LabelList } from "recharts";
 import {
   ChartConfig,
   ChartContainer,
@@ -71,6 +71,7 @@ export default function ReportName() {
       <div className="border-b bg-card">
         <div className="container mx-auto px-4 md:px-6 py-4 md:py-6">
           <h1 className="text-2xl md:text-3xl font-bold">Название</h1>
+          <p className="text-muted-foreground mt-1">Описание дашборда</p>
         </div>
       </div>
 
@@ -80,10 +81,13 @@ export default function ReportName() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Метрика</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Метрика
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">123</div>
+              <div className="text-2xl font-bold">123 456 ₽</div>
+              <p className="text-xs text-muted-foreground mt-1">За период</p>
             </CardContent>
           </Card>
         </div>
@@ -93,14 +97,32 @@ export default function ReportName() {
           <Card>
             <CardHeader>
               <CardTitle>График</CardTitle>
+              <CardDescription>Описание графика</CardDescription>
             </CardHeader>
             <CardContent>
               <ChartContainer config={chartConfig} className="h-[300px] w-full">
-                <BarChart data={data}>
-                  <CartesianGrid vertical={false} />
+                <BarChart data={data} margin={{ top: 20 }}>
+                  <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" tickLine={false} axisLine={false} />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar dataKey="value" fill="var(--color-value)" radius={4} />
+                  <YAxis
+                    tickLine={false}
+                    axisLine={false}
+                    tickFormatter={(v) => `${(v/1000).toFixed(0)}k`}
+                  />
+                  <ChartTooltip
+                    content={
+                      <ChartTooltipContent
+                        formatter={(v) => [`${Number(v).toLocaleString('ru-RU')} ₽`, "Значение"]}
+                      />
+                    }
+                  />
+                  <Bar dataKey="value" fill="var(--color-value)" radius={4}>
+                    <LabelList
+                      dataKey="value"
+                      position="top"
+                      formatter={(v: number) => `${(v/1000).toFixed(0)}k`}
+                    />
+                  </Bar>
                 </BarChart>
               </ChartContainer>
             </CardContent>
@@ -157,11 +179,21 @@ cd /opt/ai-workspace/apps/dashboard-pages && docker-compose restart
 - ✅ Данные hardcoded в компоненте (не fetch)
 - ✅ ChartContainer вместо ResponsiveContainer
 - ✅ ChartConfig для каждого графика
+- ✅ Цвета через `var(--chart-X)` (см. `references/color-system.md`)
+- ✅ **YAxis с tickFormatter** - показывай масштаб!
+- ✅ **LabelList на точках/барах** - подписывай значения!
+- ✅ **CartesianGrid strokeDasharray="3 3"** - сетка для читаемости
+- ✅ **Tooltip с formatter** - показывай единицы измерения (₽, шт, %)
+- ✅ **`\u00A0` или `whitespace-nowrap`** - число и единица не должны разрываться!
 - ✅ Адаптивный дизайн (см. `references/responsive-design.md`)
 - ✅ Перезапуск Docker после изменений
 - ✅ Проверка curl перед отправкой ссылки
 
 ### НИКОГДА:
+- ❌ `hsl(var(--chart-X))` или `oklch(var(--chart-X))` - ЧЕРНЫЕ ГРАФИКИ!
+- ❌ `<YAxis hide />` или `<XAxis hide />` - график без осей НЕЧИТАЕМ!
+- ❌ Графики без LabelList - пользователь не видит точные значения!
+- ❌ Две метрики с разным масштабом на одном графике (используй переключатель)
 - ❌ npm напрямую (только Docker)
 - ❌ Трогать layout.tsx и globals.css
 - ❌ API endpoints (данные hardcoded)
@@ -173,6 +205,8 @@ cd /opt/ai-workspace/apps/dashboard-pages && docker-compose restart
 
 Подробная документация в `references/`:
 
+- **chart-best-practices.md** - ОБЯЗАТЕЛЬНО! Правила информативных графиков (оси, подписи, tooltip)
+- **color-system.md** - цветовая палитра OKLCH и правила использования
 - **chart-examples.md** - примеры всех типов графиков (Bar, Line, Area, Pie, Radar)
 - **responsive-design.md** - адаптивность и Tailwind breakpoints
 - **troubleshooting.md** - решение проблем (404, порт занят и т.д.)
@@ -218,5 +252,5 @@ apps/dashboard-pages/
 
 ---
 
-**Версия:** 1.1.0
+**Версия:** 1.3.0
 **URL:** https://my-jarvis.ru/dashboard
