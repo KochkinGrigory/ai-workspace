@@ -2125,7 +2125,8 @@ async def send_file_handler(request):
         await bot.send_document(
             chat_id=ALLOWED_CHAT_ID,
             document=FSInputFile(temp_path),
-            caption=caption
+            caption=caption,
+            parse_mode="HTML"
         )
 
         # Удаляем временный файл
